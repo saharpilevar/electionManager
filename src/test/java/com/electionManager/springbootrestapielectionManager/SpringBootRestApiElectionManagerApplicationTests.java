@@ -1,21 +1,16 @@
 package com.electionManager.springbootrestapielectionManager;
 
+import com.electionManager.SpringBootRestApiElectionManagerApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-
 import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException;
 import com.electionManager.model.*;
 
@@ -99,6 +94,33 @@ public class SpringBootRestApiElectionManagerApplicationTests {
 		System.out.println(elect.toString());
 		Assert.assertNotNull(elect);
 	}
+	@Test
+	  public void testGetListOfchoices() {
+	    Election elect = restTemplate.getForObject(getRootUrl() + "/GetListOfChoices/1", Election.class);
+	    System.out.println(elect.getListOfChoices());
+	    Assert.assertNotNull(elect.getListOfChoices());
+	}
+	
+	@Test
+	public void testElectionsExists() {
+	      int id=1;
+	    Election elect  = restTemplate.getForObject(getRootUrl() + "/ElectionExists/"+id,Election.class); 
+	        try {
+	    Assert.assertNotNull("election exists",elect);
+	        } catch (final HttpClientErrorException e) {
+	        Assert.assertNull("election not exist", elect);
+	      }
+	  }
+	@Test
+	public void testIncremenetNumberOfVotes() {
+	    int id = 1;
+	    Election elect = restTemplate.getForObject(getRootUrl() + "/IncNumberOfVotes/" + id, Election.class);
+	    elect.setNumberOfVotes(elect.getNumberOfVotes()+1);
+	    restTemplate.put(getRootUrl() + "/IncNumberOfVotes/" + id, elect);
+
+	    Election incElection = restTemplate.getForObject(getRootUrl() + "/IncNumberOfVotes/" + id, Election.class);
+	    Assert.assertNotNull(incElection);
+	  }
 
 }
 

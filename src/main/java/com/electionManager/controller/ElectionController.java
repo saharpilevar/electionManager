@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/v1")
+//@RequestMapping("/api/v1")
 public class ElectionController {
 			@Autowired
 			private ElectionRepository electionRepository;
@@ -122,7 +122,8 @@ public class ElectionController {
 		   //4
 		   
 
-		   @GetMapping("/GetAllElections")
+		   //@GetMapping("/GetAllElections")
+			@RequestMapping(method = RequestMethod.GET, value="/GetAllElections")
 
 		   public List<Election> getAllElections() {
 
@@ -148,9 +149,74 @@ public class ElectionController {
 	  		      return elect.toString();
 		    	
 	       }
-	        
+	        //6
+	        @GetMapping("/ElectionExists/{id}")	        
+	        public String electionExists(@PathVariable(value = "id") Long electionId)         	
+            
+		        	throws ResourceNotFoundException {
 
+		  		      Election elect =
+
+		  		          electionRepository
+
+		  		              .findById(electionId)
+
+		  		              .orElseThrow(() -> new ResourceNotFoundException("Election not found on :: " + electionId));
+
+		  		      
+		  		      return elect.toString();
+			    	
+		       }
+	       
+	     //7
+	        @GetMapping("/GetListofChoices/{id}")
+	       public List<String> GetListofChoices(@PathVariable(value = "id") Long electionId)         	
+            
+		        	throws ResourceNotFoundException {
+
+		  		      Election elect =
+
+		  		          electionRepository
+
+		  		              .findById(electionId)
+
+		  		              .orElseThrow(() -> new ResourceNotFoundException("Election not found on :: " + electionId));
+
+		  		      
+		  		      return elect.getListOfChoices();
+			    	
+		       }
 	      
+	     //8
+		    @PutMapping("/IncremenetNumberOfVotes/{id}")
+
+	      public String IncremenetNumberOfVotes(@PathVariable(value = "id") Long electionId)         	
+          
+		        	throws ResourceNotFoundException {
+
+		  		      Election elect =
+
+		  		          electionRepository
+
+		  		              .findById(electionId)
+
+		  		              .orElseThrow(() -> new ResourceNotFoundException("Election not found on :: " + electionId));
+
+		  		      elect.setNumberOfVotes(elect.getNumberOfVotes()+1);
+
+				      electionRepository.save(elect);
+				      return "Number of votes incremented successfully";
+				      //return ResponseEntity.ok(editedElection);
+
+			    	
+		       }
+		    @RequestMapping(value = "/Hello")
+		    public String sayHello(){
+		     System.out.print("sa");
+		    	return "Hello world";
+		       
+		    }
+
 
 }
 
